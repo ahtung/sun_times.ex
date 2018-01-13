@@ -1,11 +1,15 @@
 defmodule SunTimesSpec do
   use ESpec
+  use Timex
   
-  let :day, do: nil#%DateTime{year: 2010, month: 3, day: 8}#(2010, 3, 8)
+  doctest SunTimes
+  
+  let :day, do: Timex.to_date({2010, 3, 8})
   let :latitude, do: 43.779
   let :longitude, do: 11.432
+  let :rise, do:  Timex.to_date({2010, 3, 8, 5, 39, 53})
   
-  it "works" do
-    expect(SunTimes.rise(day, latitude, longitude)).to eq(:world)
+  it "rise" do
+    expect(SunTimes.rise(day(), latitude(), longitude())).to be_close_to(Timex.now, {:minutes, 1})
   end
 end

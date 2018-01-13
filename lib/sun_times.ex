@@ -1,4 +1,5 @@
 defmodule SunTimes do
+  use Timex
   @moduledoc """
   Documentation for SunTimes.
   """
@@ -7,6 +8,6 @@ defmodule SunTimes do
   Calculates the sum of two numbers.
   """
   def rise(date, lat, lon) do
-    :world
+    Timex.now
   end
 end

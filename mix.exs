@@ -15,6 +15,7 @@ defmodule SunTimes.Mixfile do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      applications: [:timex],
       extra_applications: [:logger]
     ]
   end
@@ -22,7 +23,8 @@ defmodule SunTimes.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:espec, "~> 1.4.6", only: :test},
+      {:espec, "~> 1.5.0", only: :test},
+      {:timex, "~> 3.1"},
     ]
   end
 end
