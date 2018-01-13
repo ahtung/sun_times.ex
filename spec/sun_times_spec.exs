@@ -11,10 +11,10 @@ defmodule SunTimesSpec do
   let :set, do: Timex.to_datetime({{2010, 3, 8}, {17, 11, 16}}, "Etc/UTC")
 
   it "rise" do
-    expect(SunTimes.rise(day(), latitude(), longitude())).to be_close_to(rise(), {:days, 1})
+    expect(SunTimes.rise(day(), latitude(), longitude())).to be_close_to(rise(), {:minutes, 100})
   end
   
   it "set" do
-    expect(SunTimes.set(day(), latitude(), longitude())).to be_close_to(set(), {:days, 1})
+    expect(SunTimes.set(day(), latitude(), longitude())).to be_close_to(set(), {:minutes, 100})
   end
 end

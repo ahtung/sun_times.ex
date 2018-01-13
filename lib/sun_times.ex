@@ -108,13 +108,12 @@ defmodule SunTimes do
     #   return calculate(event, previous_day.new_offset, lat, lon)
     # end
 
-    # hour = Float.floor(gmt_hours)
-    # hour_remainder = (gmt_hours.to_f - hour.to_f) * 60.0
-    # minute = Float.floor(hour_remainder)
-    # seconds = (hour_remainder - minute) * 60.0
+    hour = Float.floor(gmt_hours)
+    hour_remainder = (gmt_hours - hour) * 60.0
+    minute = Float.floor(hour_remainder)
+    seconds = Float.floor((hour_remainder - minute) * 60.0)
 
-    # Timex.to_datetime({{date.year, date.month, date.day}, {hour, minute, seconds}}, "Etc/UTC")
-    Timex.to_datetime({date.year, date.month, date.day}, "Etc/UTC")
+    Timex.to_datetime({{date.year, date.month, date.day}, {round(hour), round(minute), round(seconds)}}, "Etc/UTC")
   end
   
   defp coerce_degrees(d) when d < 0 do
