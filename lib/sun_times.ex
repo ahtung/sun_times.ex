@@ -113,8 +113,8 @@ defmodule SunTimes do
     # minute = Float.floor(hour_remainder)
     # seconds = (hour_remainder - minute) * 60.0
 
-    # Timex.to_datetime({{date[:year], date[:month], date[:day]}, {hour, minute, seconds}}, "Etc/UTC")
-    Timex.to_datetime({date[:year], date[:month], date[:day]}, "Etc/UTC")
+    # Timex.to_datetime({{date.year, date.month, date.day}, {hour, minute, seconds}}, "Etc/UTC")
+    Timex.to_datetime({date.year, date.month, date.day}, "Etc/UTC")
   end
   
   defp coerce_degrees(d) when d < 0 do
