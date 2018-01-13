@@ -25,6 +25,7 @@ defmodule SunTimes.Mixfile do
     [
       {:espec, "~> 1.5.0", only: :test},
       {:timex, "~> 3.1"},
+      {:math, "~> 0.3.0"},
     ]
   end
 end
