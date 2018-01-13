@@ -8,7 +8,8 @@ defmodule SunTimes.Mixfile do
       elixir: "~> 1.3",
       start_permanent: Mix.env == :prod,
       deps: deps(),
-      preferred_cli_env: [espec: :test],
+      preferred_cli_env: [espec: :test, coveralls: :test],
+      test_coverage: [tool: ExCoveralls, test_task: "espec"],
     ]
   end
 
@@ -24,6 +25,7 @@ defmodule SunTimes.Mixfile do
   defp deps do
     [
       {:espec, "~> 1.5.0", only: :test},
+      {:excoveralls, "~> 0.8", only: :test},
       {:timex, "~> 3.1"},
       {:math, "~> 0.3.0"},
     ]
