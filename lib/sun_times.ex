@@ -4,15 +4,9 @@ defmodule SunTimes do
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> SunTimes.hello
-      :world
-
+  Calculates the sum of two numbers.
   """
-  def hello do
+  def rise(date, lat, lon) do
     :world
   end
 end
