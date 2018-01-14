@@ -30,6 +30,7 @@ defmodule SunTimes.Mixfile do
       {:excoveralls, "~> 0.8", only: :test},
       {:timex, "~> 3.1"},
       {:math, "~> 0.3.0"},
+      {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
 
