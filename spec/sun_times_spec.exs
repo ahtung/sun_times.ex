@@ -4,7 +4,7 @@ defmodule SunTimesSpec do
 
   doctest SunTimes
 
-  let :tolerance, do: {:minutes, 5}
+  let :tolerance, do: {:minutes, 3}
 
   describe "Amsterdam" do
     let :lat, do: 52.3702
@@ -92,6 +92,35 @@ defmodule SunTimesSpec do
         set = Timex.to_datetime({{1984, 5, 11}, {20, 11, 00}}, "Europe/Istanbul")
 
         expect(SunTimes.set(day(), lat(), lon())).to be_close_to(set, tolerance())
+      end
+    end
+  end
+
+  describe "Ny-Ålesund" do
+    let :lat, do: 78.959137
+    let :lon, do: 11.4599269
+
+    describe "on Jan 1st 2018" do
+      let :day, do: Timex.to_datetime({2018, 1, 1}, "Europe/Amsterdam")
+
+      it "rise" do
+        expect(SunTimes.rise(day(), lat(), lon())).to eq({:error, "Never rises"})
+      end
+
+      it "set" do
+        expect(SunTimes.set(day(), lat(), lon())).to eq({:error, "Never rises"})
+      end
+    end
+
+    describe "on Aug 1st 2018" do
+      let :day, do: Timex.to_datetime({2018, 8, 1}, "Europe/Amsterdam")
+
+      it "rise" do
+        expect(SunTimes.rise(day(), lat(), lon())).to eq({:error, "Never sets"})
+      end
+
+      it "set" do
+        expect(SunTimes.set(day(), lat(), lon())).to eq({:error, "Never sets"})
       end
     end
   end
