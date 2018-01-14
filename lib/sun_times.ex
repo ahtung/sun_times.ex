@@ -99,6 +99,9 @@ defmodule SunTimes do
     end
 
     # offset_hours = datetime.offset * 24.0
+    datetime = 
+      if date |> Map.has_key?(:utc_offset), do: date, else: Timex.to_datetime(date)
+    
     offset_hours = datetime.utc_offset / 3600
 
     # if gmt_hours + offset_hours < 0 do
