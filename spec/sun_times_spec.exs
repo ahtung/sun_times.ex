@@ -41,6 +41,22 @@ defmodule SunTimesSpec do
         expect(SunTimes.set(day(), lat(), lon())).to be_close_to(set, tolerance())
       end
     end
+
+    describe "on May 11th 1984" do
+      let :day, do: Timex.to_datetime({1984 , 5, 11}, "Europe/Amsterdam")
+
+      it "rise" do
+        rise = Timex.to_datetime({{1984, 5, 11}, {5, 51, 00}}, "Europe/Amsterdam")
+
+        expect(SunTimes.rise(day(), lat(), lon())).to be_close_to(rise, tolerance())
+      end
+
+      it "set" do
+        set = Timex.to_datetime({{1984, 5, 11}, {21, 23, 00}}, "Europe/Amsterdam")
+
+        expect(SunTimes.set(day(), lat(), lon())).to be_close_to(set, tolerance())
+      end
+    end
   end
 
   describe "Istanbul" do
