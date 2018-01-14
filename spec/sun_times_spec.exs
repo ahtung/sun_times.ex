@@ -95,4 +95,21 @@ defmodule SunTimesSpec do
       end
     end
   end
+
+  describe "Ny-Ålesund" do
+    let :lat, do: 78.959137
+    let :lon, do: 11.4599269
+
+    describe "on Jan 1st 2018" do
+      let :day, do: Timex.to_datetime({2018, 1, 1}, "Europe/Amsterdam")
+
+      it "rise" do
+        expect(SunTimes.rise(day(), lat(), lon())).to eq({:error, "Never rises"})
+      end
+
+      it "set" do
+        expect(SunTimes.set(day(), lat(), lon())).to eq({:error, "Never sets"})
+      end
+    end
+  end
 end

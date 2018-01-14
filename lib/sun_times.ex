@@ -59,51 +59,53 @@ defmodule SunTimes do
       (Math.cos(Math.deg2rad(@default_zenith)) - (sin_declination * Math.sin(Math.deg2rad(lat)))) /
       (cos_declination * Math.cos(Math.deg2rad(lat)))
     # the sun never rises on this location (on the specified date)
-    # if cos_local_hour_angle > 1 do
-    #   return options[:never_rises_result]
-    # end
-    # # the sun never sets on this location (on the specified date)
-    # if cos_local_hour_angle < -1 do
-    #   return options[:never_sets_result]
-    # end
-    # H
-    suns_local_hour =
-      if event == :rise do
-        360 - Math.rad2deg(Math.acos(cos_local_hour_angle))
+    if cos_local_hour_angle > 1 do
+      {:error, "Never rises"}
+    else
+      # # the sun never sets on this location (on the specified date)
+      if cos_local_hour_angle < -1 do
+        {:error, "Never sets"}
       else
-        Math.rad2deg(Math.acos(cos_local_hour_angle))
+        # H
+        suns_local_hour =
+          if event == :rise do
+            360 - Math.rad2deg(Math.acos(cos_local_hour_angle))
+          else
+            Math.rad2deg(Math.acos(cos_local_hour_angle))
+          end
+        # H = H / 15
+        suns_local_hour_hours = suns_local_hour / @degrees_per_hour
+
+        # T = H + RA - (0.06571 * t) - 6.622
+        local_mean_time = suns_local_hour_hours + sun_right_ascension_hours - (0.06571 * approximate_time) - 6.622
+
+        # UT = T - lngHour
+        gmt_hours = local_mean_time - longitude_hour
+        gmt_hours = if gmt_hours > 24, do: gmt_hours - 24.0, else: gmt_hours
+        gmt_hours = if gmt_hours < 0, do: gmt_hours + 24.0, else: gmt_hours
+
+        datetime =
+          if date |> Map.has_key?(:utc_offset), do: date, else: date |> to_datetime
+
+        offset_hours = datetime.utc_offset / 3600
+
+        if gmt_hours + offset_hours < 0 do
+          next_day = next_day(datetime) |> to_utc
+          calculate(event, next_day, lat, lon)
+        end
+        if gmt_hours + offset_hours > 24 do
+          prev_day = prev_day(datetime) |> to_utc
+          calculate(event, prev_day, lat, lon)
+        end
+
+        hour = Float.floor(gmt_hours)
+        hour_remainder = (gmt_hours - hour) * 60.0
+        minute = Float.floor(hour_remainder)
+        seconds = Float.floor((hour_remainder - minute) * 60.0)
+
+        Timex.to_datetime({{date.year, date.month, date.day}, {round(hour), round(minute), round(seconds)}}, "Etc/UTC")
       end
-    # H = H / 15
-    suns_local_hour_hours = suns_local_hour / @degrees_per_hour
-
-    # T = H + RA - (0.06571 * t) - 6.622
-    local_mean_time = suns_local_hour_hours + sun_right_ascension_hours - (0.06571 * approximate_time) - 6.622
-
-    # UT = T - lngHour
-    gmt_hours = local_mean_time - longitude_hour
-    gmt_hours = if gmt_hours > 24, do: gmt_hours - 24.0, else: gmt_hours
-    gmt_hours = if gmt_hours < 0, do: gmt_hours + 24.0, else: gmt_hours
-
-    datetime =
-      if date |> Map.has_key?(:utc_offset), do: date, else: date |> to_datetime
-
-    offset_hours = datetime.utc_offset / 3600
-
-    if gmt_hours + offset_hours < 0 do
-      next_day = next_day(datetime) |> to_utc
-      calculate(event, next_day, lat, lon)
     end
-    if gmt_hours + offset_hours > 24 do
-      prev_day = prev_day(datetime) |> to_utc
-      calculate(event, prev_day, lat, lon)
-    end
-
-    hour = Float.floor(gmt_hours)
-    hour_remainder = (gmt_hours - hour) * 60.0
-    minute = Float.floor(hour_remainder)
-    seconds = Float.floor((hour_remainder - minute) * 60.0)
-
-    Timex.to_datetime({{date.year, date.month, date.day}, {round(hour), round(minute), round(seconds)}}, "Etc/UTC")
   end
 
   defp coerce_degrees(d) when d < 0 do
