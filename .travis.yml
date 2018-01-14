@@ -20,7 +20,7 @@ env:
   - MIX_ENV=test
 script:
   - mix espec
-  # - mix coveralls.travis
+  - mix coveralls.travis
 notifications:
   recipients:
     - dunyakirkali@gmail.com
