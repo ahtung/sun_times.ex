@@ -132,10 +132,10 @@ defmodule SunTimes do
   end
   defp next_day(datetime) do
     next = datetime |> DateTime.to_unix
-    (next + 60) |> DateTime.from_unix!
+    (next + 86400) |> DateTime.from_unix!
   end
   defp prev_day(datetime) do
     prev = datetime |> DateTime.to_unix
-    (prev - 60) |> DateTime.from_unix!
+    (prev - 86400) |> DateTime.from_unix!
   end
 end
