@@ -99,7 +99,7 @@ defmodule SunTimes do
 
     # offset_hours = datetime.offset * 24.0
     datetime = 
-      if date |> Map.has_key?(:utc_offset), do: date, else: Timex.to_datetime(date)
+      if date |> Map.has_key?(:utc_offset), do: date, else: date |> to_datetime
     
     offset_hours = datetime.utc_offset / 3600
 
@@ -144,5 +144,9 @@ defmodule SunTimes do
   defp to_utc(datetime) do
     utc_time = (datetime |> DateTime.to_unix) - datetime.utc_offset
     utc_time |> DateTime.from_unix!
+  end
+  defp to_datetime(d) do
+    t = Timex.now
+    d |> Timex.to_datetime |> Timex.shift(hour: t.hour, minute: t.minute, second: t.second)
   end
 end
