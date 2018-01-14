@@ -131,4 +131,12 @@ defmodule SunTimes do
     {year, week} = :calendar.iso_week_number({d.year, d.month, d.day})
     ((week - 1) * 7) + (:calendar.day_of_the_week(d.year, d.month, d.day))
   end
+  defp next_day(datetime) do
+    next = datetime |> DateTime.to_unix + 60
+    next |> DateTime.from_unix!
+  end
+  defp prev_day(datetime) do
+    prev = datetime |> DateTime.to_unix - 60
+    prev |> DateTime.from_unix!
+  end
 end
