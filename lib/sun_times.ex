@@ -84,9 +84,9 @@ defmodule SunTimes do
     gmt_hours = if gmt_hours > 24, do: gmt_hours - 24.0, else: gmt_hours
     gmt_hours = if gmt_hours < 0, do: gmt_hours + 24.0, else: gmt_hours
 
-    datetime = 
+    datetime =
       if date |> Map.has_key?(:utc_offset), do: date, else: date |> to_datetime
-    
+
     offset_hours = datetime.utc_offset / 3600
 
     if gmt_hours + offset_hours < 0 do
@@ -115,20 +115,25 @@ defmodule SunTimes do
   defp coerce_degrees(d) do
     d
   end
+
   defp day_of_year(d) do
     {_, week} = :calendar.iso_week_number({d.year, d.month, d.day})
     ((week - 1) * 7) + (:calendar.day_of_the_week(d.year, d.month, d.day))
   end
+
   defp next_day(datetime) do
     ((datetime |> DateTime.to_unix) + 86400) |> DateTime.from_unix!
   end
+
   defp prev_day(datetime) do
     ((datetime |> DateTime.to_unix) - 86400) |> DateTime.from_unix!
   end
+
   defp to_utc(datetime) do
     utc_time = (datetime |> DateTime.to_unix) - datetime.utc_offset
     utc_time |> DateTime.from_unix!
   end
+
   defp to_datetime(d) do
     t = Timex.now
     d |> Timex.to_datetime |> Timex.shift(hour: t.hour, minute: t.minute, second: t.second)
