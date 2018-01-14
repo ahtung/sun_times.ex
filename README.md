@@ -5,8 +5,6 @@
 [![Hex.pm version](https://img.shields.io/hexpm/v/sun_times.svg?style=flat-square)](https://hex.pm/packages/sun_times)
 [![Hex.pm downloads](https://img.shields.io/hexpm/dt/sun_times.svg)](https://hex.pm/packages/sun_times)
 
-**TODO: Add description**
-
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
