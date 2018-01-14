@@ -111,6 +111,14 @@ defmodule SunTimes do
     #   previous_day = prev_day(datetime)
     #   return calculate(event, previous_day.new_offset, lat, lon)
     # end
+    if gmt_hours + offset_hours < 0 do
+      new_offset = next_day(datetime) |> to_utc
+    end
+    if gmt_hours + offset_hours > 24 do
+      new_offset = prev_day(datetime) |> to_utc
+    end
+
+    # return calculate(event, new_offset, lat, lon)
 
     hour = Float.floor(gmt_hours)
     hour_remainder = (gmt_hours - hour) * 60.0
@@ -140,5 +148,9 @@ defmodule SunTimes do
   defp prev_day(datetime) do
     prev = datetime |> DateTime.to_unix
     (prev - 86400) |> DateTime.from_unix!
+  end
+  defp to_utc(datetime) do
+    utc_time = (datetime |> DateTime.to_unix) - datetime.utc_offset
+    utc_time |> DateTime.from_unix!
   end
 end
