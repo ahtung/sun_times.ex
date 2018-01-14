@@ -36,7 +36,8 @@ defmodule SunTimes do
         18.0
       end
     # approximate_time = datetime.yday + (base_time - longitude_hour) / 24.0
-    approximate_time = (base_time - longitude_hour) / 24.0
+
+    approximate_time = day_of_year(date) + (base_time - longitude_hour) / 24.0
     
     # M
     mean_sun_anomaly = (0.9856 * approximate_time) - 3.289
@@ -125,5 +126,9 @@ defmodule SunTimes do
   end
   defp coerce_degrees(d) do
     d
+  end
+  defp day_of_year(d) do
+    {year, week} = :calendar.iso_week_number({d.year, d.month, d.day})
+    ((week - 1) * 7) + (:calendar.day_of_the_week(d.year, d.month, d.day))
   end
 end
