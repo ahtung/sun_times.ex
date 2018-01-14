@@ -98,15 +98,19 @@ defmodule SunTimes do
     end
 
     # offset_hours = datetime.offset * 24.0
-    #
-    # if gmt_hours + offset_hours < 0 do
-    #   next_day = next_day(datetime)
-    #   return calculate(event, next_day.new_offset, lat, lon)
-    # end
-    # if gmt_hours + offset_hours > 24 do
-    #   previous_day = prev_day(datetime)
-    #   return calculate(event, previous_day.new_offset, lat, lon)
-    # end
+    datetime = 
+      if date |> Map.has_key?(:utc_offset), do: date, else: date |> to_datetime
+    
+    offset_hours = datetime.utc_offset / 3600
+
+    if gmt_hours + offset_hours < 0 do
+      next_day = next_day(datetime) |> to_utc
+      calculate(event, next_day, lat, lon)
+    end
+    if gmt_hours + offset_hours > 24 do
+      prev_day = prev_day(datetime) |> to_utc
+      calculate(event, prev_day, lat, lon)
+    end
 
     hour = Float.floor(gmt_hours)
     hour_remainder = (gmt_hours - hour) * 60.0
@@ -128,5 +132,21 @@ defmodule SunTimes do
   defp day_of_year(d) do
     {year, week} = :calendar.iso_week_number({d.year, d.month, d.day})
     ((week - 1) * 7) + (:calendar.day_of_the_week(d.year, d.month, d.day))
+  end
+  defp next_day(datetime) do
+    next = datetime |> DateTime.to_unix
+    (next + 86400) |> DateTime.from_unix!
+  end
+  defp prev_day(datetime) do
+    prev = datetime |> DateTime.to_unix
+    (prev - 86400) |> DateTime.from_unix!
+  end
+  defp to_utc(datetime) do
+    utc_time = (datetime |> DateTime.to_unix) - datetime.utc_offset
+    utc_time |> DateTime.from_unix!
+  end
+  defp to_datetime(d) do
+    t = Timex.now
+    d |> Timex.to_datetime |> Timex.shift(hour: t.hour, minute: t.minute, second: t.second)
   end
 end
