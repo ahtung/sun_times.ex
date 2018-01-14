@@ -3,7 +3,6 @@ defmodule SunTimes do
   Documentation for SunTimes.
   """
   @default_zenith 90.83333
-  @known_events [:set, :rise]
   @degrees_per_hour 360.0 / 24.0
 
   @doc """
@@ -21,10 +20,6 @@ defmodule SunTimes do
   end
 
   defp calculate(event, date, lat, lon) do
-    unless Enum.member?(@known_events, event) do
-      raise RuntimeError, "Unknown event '#{event}'"
-    end
-
     # lngHour
     longitude_hour = lon / @degrees_per_hour
 
