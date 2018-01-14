@@ -25,11 +25,7 @@ defmodule SunTimes do
 
     # t
     base_time =
-      if event == :rise do
-        6.0
-      else
-        18.0
-      end
+      if event == :rise, do: 6.0, else: 18.0
 
     approximate_time = day_of_year(date) + (base_time - longitude_hour) / 24.0
 
@@ -85,14 +81,9 @@ defmodule SunTimes do
 
     # UT = T - lngHour
     gmt_hours = local_mean_time - longitude_hour
-    if gmt_hours > 24 do
-      gmt_hours = gmt_hours - 24.0
-    end
-    if gmt_hours <  0 do
-      gmt_hours = gmt_hours + 24.0
-    end
+    gmt_hours = if gmt_hours > 24, do: gmt_hours - 24.0, else: gmt_hours
+    gmt_hours = if gmt_hours < 0, do: gmt_hours + 24.0, else: gmt_hours
 
-    # offset_hours = datetime.offset * 24.0
     datetime = 
       if date |> Map.has_key?(:utc_offset), do: date, else: date |> to_datetime
     
@@ -125,16 +116,14 @@ defmodule SunTimes do
     d
   end
   defp day_of_year(d) do
-    {year, week} = :calendar.iso_week_number({d.year, d.month, d.day})
+    {_, week} = :calendar.iso_week_number({d.year, d.month, d.day})
     ((week - 1) * 7) + (:calendar.day_of_the_week(d.year, d.month, d.day))
   end
   defp next_day(datetime) do
-    next = datetime |> DateTime.to_unix
-    (next + 86400) |> DateTime.from_unix!
+    ((datetime |> DateTime.to_unix) + 86400) |> DateTime.from_unix!
   end
   defp prev_day(datetime) do
-    prev = datetime |> DateTime.to_unix
-    (prev - 86400) |> DateTime.from_unix!
+    ((datetime |> DateTime.to_unix) - 86400) |> DateTime.from_unix!
   end
   defp to_utc(datetime) do
     utc_time = (datetime |> DateTime.to_unix) - datetime.utc_offset
