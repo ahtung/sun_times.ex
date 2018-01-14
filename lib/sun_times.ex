@@ -90,8 +90,8 @@ defmodule SunTimes do
 
     # UT = T - lngHour
     gmt_hours = local_mean_time - longitude_hour
-    gmt_hours = if gmt_hours > 24, do: gmt_hours - 24.0
-    gmt_hours = if gmt_hours < 0, do: gmt_hours + 24.0
+    gmt_hours = if gmt_hours > 24, do: gmt_hours - 24.0, else: gmt_hours
+    gmt_hours = if gmt_hours < 0, do: gmt_hours + 24.0, else: gmt_hours
 
     # offset_hours = datetime.offset * 24.0
     datetime = 
