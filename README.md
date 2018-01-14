@@ -13,7 +13,7 @@ by adding `sun_times` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:sun_times, "~> 0.1.0"}
+    {:sun_times, "~> 0.1.1"}
   ]
 end
 ```
