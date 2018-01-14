@@ -90,12 +90,8 @@ defmodule SunTimes do
 
     # UT = T - lngHour
     gmt_hours = local_mean_time - longitude_hour
-    if gmt_hours > 24 do
-      gmt_hours = gmt_hours - 24.0
-    end
-    if gmt_hours <  0 do
-      gmt_hours = gmt_hours + 24.0
-    end
+    gmt_hours = if gmt_hours > 24, do: gmt_hours - 24.0
+    gmt_hours = if gmt_hours < 0, do: gmt_hours + 24.0
 
     # offset_hours = datetime.offset * 24.0
     datetime = 
@@ -130,7 +126,7 @@ defmodule SunTimes do
     d
   end
   defp day_of_year(d) do
-    {year, week} = :calendar.iso_week_number({d.year, d.month, d.day})
+    {_, week} = :calendar.iso_week_number({d.year, d.month, d.day})
     ((week - 1) * 7) + (:calendar.day_of_the_week(d.year, d.month, d.day))
   end
   defp next_day(datetime) do
