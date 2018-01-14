@@ -99,7 +99,8 @@ defmodule SunTimes do
     end
 
     # offset_hours = datetime.offset * 24.0
-    # 
+    offset_hours = datetime.utc_offset / 3600
+
     # if gmt_hours + offset_hours < 0 do
     #   next_day = next_day(datetime)
     #   return calculate(event, next_day.new_offset, lat, lon)
