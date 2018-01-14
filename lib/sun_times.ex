@@ -12,7 +12,7 @@ defmodule SunTimes do
   def rise(date, lat, lon) do
     calculate(:rise, date, lat, lon)
   end
-  
+
   @doc """
   Calculates the sunset.
   """
@@ -24,10 +24,10 @@ defmodule SunTimes do
     unless Enum.member?(@known_events, event) do
       raise RuntimeError, "Unknown event '#{event}'"
     end
-    
+
     # lngHour
     longitude_hour = lon / @degrees_per_hour
-    
+
     # t
     base_time =
       if event == :rise do
@@ -35,30 +35,29 @@ defmodule SunTimes do
       else
         18.0
       end
-    # approximate_time = datetime.yday + (base_time - longitude_hour) / 24.0
 
     approximate_time = day_of_year(date) + (base_time - longitude_hour) / 24.0
-    
+
     # M
     mean_sun_anomaly = (0.9856 * approximate_time) - 3.289
-    
+
     # L
     sun_true_longitude = mean_sun_anomaly +
                         (1.916 * Math.sin(Math.deg2rad(mean_sun_anomaly))) +
                         (0.020 * Math.sin(2 * Math.deg2rad(mean_sun_anomaly))) +
                         282.634
     sun_true_longitude = coerce_degrees(sun_true_longitude)
-    
+
     # RA
     tan_right_ascension = 0.91764 * Math.tan(Math.deg2rad(sun_true_longitude))
     sun_right_ascension = Math.rad2deg(Math.atan(tan_right_ascension))
     sun_right_ascension = coerce_degrees(sun_right_ascension)
-    
+
     # right ascension value needs to be in the same quadrant as L
     sun_true_longitude_quadrant  = Float.floor(sun_true_longitude  / 90.0) * 90.0
     sun_right_ascension_quadrant = Float.floor(sun_right_ascension / 90.0) * 90.0
     sun_right_ascension = sun_right_ascension + (sun_true_longitude_quadrant - sun_right_ascension_quadrant)
-    
+
     # RA = RA / 15
     sun_right_ascension_hours = sun_right_ascension / @degrees_per_hour
 
@@ -70,7 +69,7 @@ defmodule SunTimes do
       (cos_declination * Math.cos(Math.deg2rad(lat)))
     # the sun never rises on this location (on the specified date)
     # if cos_local_hour_angle > 1 do
-    #   return options[:never_rises_result] 
+    #   return options[:never_rises_result]
     # end
     # # the sun never sets on this location (on the specified date)
     # if cos_local_hour_angle < -1 do
@@ -99,7 +98,7 @@ defmodule SunTimes do
     end
 
     # offset_hours = datetime.offset * 24.0
-    # 
+    #
     # if gmt_hours + offset_hours < 0 do
     #   next_day = next_day(datetime)
     #   return calculate(event, next_day.new_offset, lat, lon)
@@ -116,7 +115,7 @@ defmodule SunTimes do
 
     Timex.to_datetime({{date.year, date.month, date.day}, {round(hour), round(minute), round(seconds)}}, "Etc/UTC")
   end
-  
+
   defp coerce_degrees(d) when d < 0 do
     coerce_degrees(d + 360)
   end
