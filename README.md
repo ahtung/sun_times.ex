@@ -18,6 +18,28 @@ def deps do
 end
 ```
 
+## Usage
+
+In order to find the sunrise time in Amsterdam on the 14th of January:
+
+```
+lat = 52.3702
+lon = 4.8952
+day = Timex.to_datetime({2018 , 1, 14}, "Europe/Amsterdam")
+
+SunTimes.rise(day, lat, lon)
+```
+
+Similarly, in order to find the sunset time in Amsterdam on the same day:
+
+```
+lat = 52.3702
+lon = 4.8952
+day = Timex.to_datetime({2018 , 1, 14}, "Europe/Amsterdam")
+
+SunTimes.set(day, lat, lon)
+```
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/sun_times](https://hexdocs.pm/sun_times).
