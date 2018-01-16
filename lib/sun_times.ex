@@ -20,6 +20,7 @@ defmodule SunTimes do
   end
 
   defp calculate(event, date, lat, lon) do
+    datetime = date |> Timex.to_datetime
     # lngHour
     longitude_hour = lon / @degrees_per_hour
 
@@ -27,7 +28,7 @@ defmodule SunTimes do
     base_time =
       if event == :rise, do: 6.0, else: 18.0
 
-    approximate_time = day_of_year(date) + (base_time - longitude_hour) / 24.0
+    approximate_time = day_of_year(datetime) + (base_time - longitude_hour) / 24.0
 
     # M
     mean_sun_anomaly = (0.9856 * approximate_time) - 3.289
@@ -84,39 +85,19 @@ defmodule SunTimes do
         gmt_hours = if gmt_hours > 24, do: gmt_hours - 24.0, else: gmt_hours
         gmt_hours = if gmt_hours < 0, do: gmt_hours + 24.0, else: gmt_hours
 
-        datetime =
-          if date |> Map.has_key?(:utc_offset), do: date, else: date |> to_datetime
-
-        offset_hours = datetime.utc_offset / 3600
-
-        if gmt_hours + offset_hours < 0 do
-          next_day = next_day(datetime) |> to_utc
-          calculate(event, next_day, lat, lon)
-        end
-        if gmt_hours + offset_hours > 24 do
-          prev_day = prev_day(datetime) |> to_utc
-          calculate(event, prev_day, lat, lon)
-        end
-
         hour = Float.floor(gmt_hours)
         hour_remainder = (gmt_hours - hour) * 60.0
         minute = Float.floor(hour_remainder)
         seconds = Float.floor((hour_remainder - minute) * 60.0)
 
-        Timex.to_datetime({{date.year, date.month, date.day}, {round(hour), round(minute), round(seconds)}}, "Etc/UTC")
+        Timex.to_datetime({{datetime.year, datetime.month, datetime.day}, {round(hour), round(minute), round(seconds)}}, "Etc/UTC")
       end
     end
   end
 
-  defp coerce_degrees(d) when d < 0 do
-    coerce_degrees(d + 360)
-  end
-  defp coerce_degrees(d) when d >= 360 do
-    coerce_degrees(d - 360)
-  end
-  defp coerce_degrees(d) do
-    d
-  end
+  defp coerce_degrees(d) when d < 0, do: coerce_degrees(d + 360)
+  defp coerce_degrees(d) when d >= 360, do: coerce_degrees(d - 360)
+  defp coerce_degrees(d), do: d
 
   defp day_of_year(d) do
     {_, week} = :calendar.iso_week_number({d.year, d.month, d.day})
@@ -124,20 +105,19 @@ defmodule SunTimes do
   end
 
   defp next_day(datetime) do
-    ((datetime |> DateTime.to_unix) + 86400) |> DateTime.from_unix!
+    Timex.shift(datetime, days: 1)
+      |> Timex.to_date
   end
 
   defp prev_day(datetime) do
-    ((datetime |> DateTime.to_unix) - 86400) |> DateTime.from_unix!
-  end
-
-  defp to_utc(datetime) do
-    utc_time = (datetime |> DateTime.to_unix) - datetime.utc_offset
-    utc_time |> DateTime.from_unix!
+    Timex.shift(datetime, days: -1)
+      |> Timex.to_date
   end
 
   defp to_datetime(d) do
     t = Timex.now
-    d |> Timex.to_datetime |> Timex.shift(hour: t.hour, minute: t.minute, second: t.second)
+    d
+      |> Timex.to_datetime
+      |> Timex.shift(hour: t.hour, minute: t.minute, second: t.second)
   end
 end
