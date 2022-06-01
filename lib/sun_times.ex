@@ -82,8 +82,10 @@ defmodule SunTimes do
 
         # UT = T - lngHour
         gmt_hours = local_mean_time - longitude_hour
-        gmt_hours = if gmt_hours > 24, do: gmt_hours - 24.0, else: gmt_hours
-        gmt_hours = if gmt_hours < 0, do: gmt_hours + 24.0, else: gmt_hours
+
+        # If gmt_hours > 24 or < 0 wrap hours and update date
+        {gmt_hours, datetime} = if gmt_hours > 24, do: {gmt_hours - 24.0, next_day(datetime)}, else: {gmt_hours, datetime}
+        {gmt_hours, datetime} = if gmt_hours < 0, do: {gmt_hours + 24.0, prev_day(datetime)}, else: {gmt_hours, datetime}
 
         hour = Float.floor(gmt_hours)
         hour_remainder = (gmt_hours - hour) * 60.0
