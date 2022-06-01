@@ -57,4 +57,20 @@ defmodule SunTimesTest do
              )
     end
   end
+
+  describe "relationship of sunset to sunrise" do
+    test "for all longitudes sunset should be after sunrise" do
+      rise = TestHelpers.loopThroughTimeZones(30, 5, :rise, 0)
+      set = TestHelpers.loopThroughTimeZones(30, 5, :set, 0)
+
+      -12..11
+      |> Enum.each(fn hour ->
+        assert DateTime.diff(
+                 Enum.at(set, hour),
+                 Enum.at(rise, hour),
+                 :second
+               ) >= 0
+      end)
+    end
+  end
 end

@@ -80,6 +80,9 @@ defmodule SunTimes do
         # T = H + RA - (0.06571 * t) - 6.622
         local_mean_time = suns_local_hour_hours + sun_right_ascension_hours - (0.06571 * approximate_time) - 6.622
 
+        # Convert sunset's negative local time to positive number of hours
+        local_mean_time = if event == :set, do: local_mean_time + 24, else: local_mean_time
+
         # UT = T - lngHour
         gmt_hours = local_mean_time - longitude_hour
 
